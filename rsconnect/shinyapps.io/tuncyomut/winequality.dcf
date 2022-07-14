@@ -1,0 +1,13 @@
+name: winequality
+title: winequality
+username:
+account: tuncyomut
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 6641879
+bundleId: 6098187
+url: https://tuncyomut.shinyapps.io/winequality/
+when: 1657808815.93886
+lastSyncTime: 1657808815.93888
+asMultiple: FALSE
+asStatic: FALSE
