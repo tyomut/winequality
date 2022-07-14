@@ -10,12 +10,12 @@ replace_space <- function(txt){
 
 base_theme <- function() {
     theme(axis.title.x = element_text(size = 20),
-                     axis.text.x = element_text(size = 12),
-                     axis.title.y = element_text(size = 20),
-                     axis.text.y = element_text(size = 12),
-                     plot.background = element_rect(fill = 'white'),
-                     panel.background = element_rect(color = 'black', fill = 'white'),
-                     panel.grid.major = element_line(color = 'gray'),
+          axis.text.x = element_text(size = 12),
+          axis.title.y = element_text(size = 20),
+          axis.text.y = element_text(size = 12),
+          plot.background = element_rect(fill = 'white'),
+          panel.background = element_rect(color = 'black', fill = 'white'),
+          panel.grid.major = element_line(color = 'gray'),
     )
 }
 
