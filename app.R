@@ -24,6 +24,13 @@ whitewine <- read_delim('./data/winequality-white.csv',delim=';', col_names = TR
 #whitewine <- rename_with(whitewine, replace_space)
 whitewine$quality = as.factor(whitewine$quality)
 
+var_names <- c()
+for (v in names(spec(whitewine)[["cols"]])) {
+  if(is.null(levels(whitewine[[v]]))){
+    var_names <- c(var_names,v)
+  }
+}
+
 # Define UI ----
 ui <- fluidPage(
 
@@ -80,7 +87,7 @@ ui <- fluidPage(
                           selectInput(
                             inputId = 'selected_var',
                             label = 'Variable:',
-                            choices = names(spec(whitewine)[["cols"]]),
+                            choices = var_names,
                             width = '100%',
                           )
                    )),
@@ -112,7 +119,8 @@ ui <- fluidPage(
                 selectInput(
                   inputId = 'selected_var_pointplot',
                   label = NULL,
-                  choices = names(spec(whitewine)[["cols"]]),
+                  choices = var_names,
+                  selected = var_names[length(var_names)],
                   width = '50%',
                 )
                 
