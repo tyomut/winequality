@@ -33,14 +33,18 @@ for (v in names(spec(whitewine)[["cols"]])) {
 
 # Define UI ----
 ui <- fluidPage(
+  
+    tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "main.css")),
 
+    # Title & Logo ----
     title = "Wine Quality",
     
     fluidRow(
-      column(
-        width = 4,
-        img(src="logo.png", height = '100px'),
-        tags$span('Wine Analyser', style="margin-left: 5px; font-family:helvetica; font-size:24px")
+      column(width = 12,
+          img(src="logo.png", height = '100px', style = "float:left;"),
+          tags$div(tags$span('Wine'),class="color1 logotext line1"),
+          tags$div(tags$span('Quality'),class="color2 logotext line2"),
+          tags$div(tags$span('Analyzer'),class="color3 logotext line3"),
       ),
     ),
     fluidRow(
@@ -54,29 +58,59 @@ ui <- fluidPage(
       widths = c(2, 10),
       well = FALSE,
 
-      # Einleitung ----
+      # Home ----
       tabPanel(
-        "Einleitung", 
-        img(src = "wine.jpg"),
+        "Home", 
         tags$p(
-          "Dies ist ein Typoblindtext. An ihm kann man sehen, ob alle Buchstaben da sind und wie sie aussehen. Manchmal benutzt man Worte wie Hamburgefonts, Rafgenduks oder Handgloves, um Schriften zu testen. Manchmal Sätze, die alle Buchstaben des Alphabets enthalten - man nennt diese Sätze »Pangrams«."
+          class = "color1",
+          style="width:100%; text-align:center; font-size:36px; font-weight: bold;",
+          "Welcome to the Wine Quality Analyzer"
         ),
+        tags$br(),
         tags$p(
-          "Sehr bekannt ist dieser: The quick brown fox jumps over the lazy old dog. Oft werden in Typoblindtexte auch fremdsprachige Satzteile eingebaut (AVAIL® and Wefox™ are testing aussi la Kerning), um die Wirkung in anderen Sprachen zu testen. In Lateinisch sieht zum Beispiel fast jede Schrift gut aus."
+          class = "",
+          style="width:100%; text-align:justify; font-size:24px; font-weight: bold;",
+          "The quality of your wine matters."
         ),
+        tags$br(),
         tags$p(
-          "Quod erat demonstrandum. Seit 1975 fehlen in den meisten Testtexten die Zahlen, weswegen nach TypoGb. 204 § ab dem Jahr 2034 Zahlen in 86 der Texte zur Pflicht werden. Nichteinhaltung wird mit bis zu 245 € oder 368 $ bestraft."
+          class = "hometext",
+          "We offer you a tool to evaluate your wine based on physicochemical tests results for the following 11 factors: fixed acidity, volatile acidity, citric acid, residual sugar, chlorides, free sulfur dioxide, total sulfur dioxide, density, pH, sulphates and alcohol."
         ),
+        tags$br(),
         tags$p(
-          "Genauso wichtig in sind mittlerweile auch Âçcèñtë, die in neueren Schriften aber fast immer enthalten sind. Ein wichtiges aber schwierig zu integrierendes Feld sind OpenType-Funktionalitäten. Je nach Software und Voreinstellungen können eingebaute Kapitälchen, Kerning oder Ligaturen (sehr pfiffig) nicht richtig dargestellt werden. Dies ist ein Typoblindtext. An ihm kann man sehen, ob alle Buchstaben da sind und wie sie aussehen. Manchmal benutzt man Worte wie Hamburgefonts, Rafgenduks"
+          class = "hometext",
+          "In order to provide you a reliable prediction we have built a comprehensive machine learning model that we trained with ",tags$b("over 3,000")," observations and tested extensively. We followed the standard framework for data mining (CRISP-DM) in the development of this application."
         ),
+        tags$br(),
+        tags$p(
+          class = "hometext",
+          "Enter your result in our ", tags$b("ANALYZER")," to see how your wine will score."
+        ),
+        tags$br(),
+        tags$p(
+          class = "hometext",
+          "If you want to get an overview on the data, in ",tags$b("DATA INSIGHTS")," your will find more details."
+        ),
+        tags$br(),
+        tags$p(
+          class = "hometext",
+          "For further information on the applied ",tags$b("MODELS")," feel free to have a look at them as well."
+        ),
+        
       ),
       
-      # Explorative Analyse ----
+      # Statistical Models ----
       tabPanel(
-        "Explorative Analyse", 
+        "Analyzer", 
+        ""
+      ),
+      
+      # Data Insights ----
+      tabPanel(
+        "Data Insights", 
         fluidRow(
-          # Box Plot----
+          # Box Plot
           column(width = 6,
                  fluidRow(
                    column(width = 12,
@@ -102,7 +136,7 @@ ui <- fluidPage(
                    )),                 
           ),
           
-          # Point Plot----
+          # Point Plot
           column(width = 6,
             fluidRow(
               column(width = 12,
@@ -126,13 +160,15 @@ ui <- fluidPage(
         ),
       ),   
     
-      # Statistisches Modell ----
+      # Statistical Models ----
       tabPanel(
-        "Statistisches Modell", 
+        "Statistical Models", 
         ""
       ),
 ),
 )
+
+
 
 # Define server ----
 server <- function(input, output) {

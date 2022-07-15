@@ -1,0 +1,29 @@
+.color1 {
+  color: #00664d ;
+}
+.color2 {
+  color: #83a95a ;
+}
+.color3 {
+  color: #92d050 ;
+}
+
+.logotext {
+		font-family:helvetica; 
+		font-size:24px
+}
+.logotext.line1 span{
+  margin-left: -15px ; 
+}
+.logotext.line2 span{
+  margin-left: -5px ; 
+}
+.logotext.line3 span{
+  margin-left: 5px ; 
+}
+
+.hometext {
+  width:100%; 
+  text-align:justify; 
+  font-size:18px;
+}
