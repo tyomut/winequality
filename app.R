@@ -50,6 +50,8 @@ ui <- fluidPage(
     navlistPanel(
       widths = c(2, 10),
       well = FALSE,
+
+      # Einleitung ----
       tabPanel(
         "Einleitung", 
         img(src = "wine.jpg"),
@@ -66,9 +68,12 @@ ui <- fluidPage(
           "Genauso wichtig in sind mittlerweile auch Âçcèñtë, die in neueren Schriften aber fast immer enthalten sind. Ein wichtiges aber schwierig zu integrierendes Feld sind OpenType-Funktionalitäten. Je nach Software und Voreinstellungen können eingebaute Kapitälchen, Kerning oder Ligaturen (sehr pfiffig) nicht richtig dargestellt werden. Dies ist ein Typoblindtext. An ihm kann man sehen, ob alle Buchstaben da sind und wie sie aussehen. Manchmal benutzt man Worte wie Hamburgefonts, Rafgenduks"
         ),
       ),
+      
+      # Explorative Analyse ----
       tabPanel(
         "Explorative Analyse", 
         fluidRow(
+          # Box Plot----
           column(width = 6,
                  fluidRow(
                    column(width = 12,
@@ -89,17 +94,28 @@ ui <- fluidPage(
                           plotOutput("distPlot"),
                    )),
           ),
+          
+          # Point Plot----
           column(width = 6,
-                 column(width = 12,
-                        plotOutput("pointPlot"),
-                 ),
+            fluidRow(
+              column(width = 12,
+                  
+              ),
+            ),
+            fluidRow(
+              column(width = 12,
+                plotOutput("pointPlot"),
+              ),
+            ),
           ),
+        ),
+      ),   
+    
+      # Statistisches Modell ----
+      tabPanel(
+        "Statistisches Modell", 
+        ""
       ),
-    ),   
-    tabPanel(
-      "Statistisches Modell", 
-      ""
-    ),
 ),
 )
 
