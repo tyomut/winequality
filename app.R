@@ -70,31 +70,40 @@ ui <- fluidPage(
         tags$p(
           class = "",
           style="width:100%; text-align:justify; font-size:24px; font-weight: bold;",
-          "The quality of your WINE matters."
+          "The QUALITY of WINE matters."
         ),
         tags$br(),
         tags$p(
           class = "hometext",
-          "We offer you a tool to evaluate your wine based on physicochemical tests results for the following 11 factors: fixed acidity, volatile acidity, citric acid, residual sugar, chlorides, free sulfur dioxide, total sulfur dioxide, density, pH, sulphates and alcohol."
+          "We offer you a tool to evaluate wine quality based on physicochemical tests results for the following 11 factors:"
+          
         ),
         tags$br(),
         tags$p(
           class = "hometext",
-          "In order to provide you a reliable prediction we have built a comprehensive machine learning model that we trained with ",tags$b("over 3,000")," observations and tested extensively. We followed the standard framework for data mining (CRISP-DM) in the development of this application."
+          "- Fixed acidity",  tags$br(),
+          "- Volatile acidity", tags$br(),
+          "- Citric acid", tags$br(),
+          "- Residual sugar", tags$br(),
+          "- Chlorides", tags$br(),
+          "- Free sulfur dioxide", tags$br(),
+          "- Total sulfur dioxide", tags$br(),
+          "- Density", tags$br(),
+          "- pH", tags$br(),
+          "- Sulphates", tags$br(),
+          "- Alcohol", tags$br(),
+        ), 
+        tags$br(),
+        tags$p(
+          class = "hometext",
+          "In order to provide you a reliable prediction we have built a comprehensive machine learning model that we trained with ",tags$b("over 3,000")," observations and tested extensively.", tags$br(), 
+          "We followed the standard framework for data mining (CRISP-DM) in the development of this application."
         ),
         tags$br(),
         tags$p(
           class = "hometext",
-          "Enter your result in our ", tags$b("ANALYZER")," to see how your wine will score."
-        ),
-        tags$br(),
-        tags$p(
-          class = "hometext",
-          "If you want to get an overview on the data, in ",tags$b("DATA INSIGHTS")," your will find more details."
-        ),
-        tags$br(),
-        tags$p(
-          class = "hometext",
+          "Enter your result in our ", tags$b("ANALYZER")," to see how your wine will score.", tags$br(),
+          "If you want to get an overview on the data, in ",tags$b("DATA INSIGHTS")," your will find more details.", tags$br(),
           "For further information on the applied ",tags$b("MODELS")," feel free to have a look at them as well."
         ),
         
