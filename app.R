@@ -39,12 +39,8 @@ ui <- fluidPage(
     fluidRow(
       column(
         width = 4,
-        tags$h1("Wine Quality")
-      ),
-      column(
-        width = 4,
-        offset = 4,
-        img(src="hs-aalen-logo.png")
+        img(src="logo.png", height = '100px'),
+        tags$span('Wine Analyser', style="margin-left: 5px; font-family:helvetica; font-size:24px")
       ),
     ),
     fluidRow(
