@@ -70,7 +70,7 @@ ui <- fluidPage(
         tags$p(
           class = "",
           style="width:100%; text-align:justify; font-size:24px; font-weight: bold;",
-          "The quality of your wine matters."
+          "The quality of your WINE matters."
         ),
         tags$br(),
         tags$p(
