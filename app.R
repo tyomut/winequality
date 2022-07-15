@@ -91,8 +91,12 @@ ui <- fluidPage(
                    )),
                  fluidRow(
                    column(width = 12,
-                          plotOutput("distPlot"),
+                          plotOutput("frequency_plot"),
                    )),
+                 fluidRow(
+                   column(width = 12,
+                          plotOutput("box_plot"),
+                   )),                 
           ),
           
           # Point Plot----
@@ -103,8 +107,15 @@ ui <- fluidPage(
               ),
             ),
             fluidRow(
-              column(width = 12,
-                plotOutput("pointPlot"),
+              column(width = 12, align = 'center',     
+                plotOutput("point_plot"),
+                selectInput(
+                  inputId = 'selected_var_pointplot',
+                  label = NULL,
+                  choices = names(spec(whitewine)[["cols"]]),
+                  width = '50%',
+                )
+                
               ),
             ),
           ),
@@ -122,24 +133,41 @@ ui <- fluidPage(
 # Define server ----
 server <- function(input, output) {
 
-    output$distPlot <- renderPlot({
+    output$box_plot <- renderPlot({
         ggplot(whitewine,aes(quality, whitewine[[input$selected_var]])) + 
         geom_boxplot() + 
         geom_hline(yintercept = mean(whitewine[[input$selected_var]]),
                    color = 'red',
                    linetype = 2,
                    ) +
-        labs(x = "Quality", y = input$selected_var) +
+        labs(title = "Box Plot", x = "Quality", y = input$selected_var) +
         base_theme()
       })
 
-    output$pointPlot <- renderPlot({
-      x <- whitewine[["alcohol"]]
-      y <- whitewine[["total sulfur dioxide"]]
+    output$frequency_plot <- renderPlot({
+      q <- quantile(whitewine[[input$selected_var]], probs = c(0.25,0.50,0.75))
+
+      ggplot(whitewine,aes(whitewine[[input$selected_var]])) + 
+        geom_freqpoly() +  
+        geom_vline(xintercept = q[1], color = 'blue',linetype = 3,) +
+        geom_vline(xintercept = q[2], color = 'red', linetype = 2,) +
+        geom_vline(xintercept = q[3], color = 'blue',linetype = 3,) +
+        annotate(geom = "text", x = q[1], y = 0, label = "25%") +
+        annotate(geom = "text", x = q[2], y = 0, label = "50%") +
+        annotate(geom = "text", x = q[3], y = 0, label = "75%") +
+        base_theme() +
+        labs(title = "Frequency Plot",  x = input$selected_var, y="count" )
+    })
+    
+    
+    output$point_plot <- renderPlot({
+      x <- whitewine[[input$selected_var_pointplot]]
+      y <- whitewine[[input$selected_var]]
       c <- whitewine[["quality"]]
+      
       ggplot(whitewine,aes(x,y)) + 
         geom_point(color = c) +
-        labs(x = "alcohol", y = "total sulfur dioxide") +
+        labs(x = input$selected_var_pointplot, y = input$selected_var) +
         base_theme() 
     })
     
