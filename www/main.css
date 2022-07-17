@@ -43,3 +43,7 @@ a:focus{
   outline: none;
 }
 
+.selectize-control {
+  font-size: 14pt;
+  
+}

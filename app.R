@@ -22,13 +22,16 @@ base_theme <- function() {
 # Load Data ----
 whitewine <- read_delim('./data/winequality-white.csv',delim=';', col_names = TRUE)
 #whitewine <- rename_with(whitewine, replace_space)
-whitewine$quality = as.factor(whitewine$quality)
 
-quality_levels <- as.integer(levels(whitewine[["quality"]]))
+mutate(whitewine,quality = as.character(quality))
+
+whitewine[["quality"]] <- ordered(as.factor(whitewine[["quality"]]))
+
+quality_levels <- levels(whitewine[["quality"]])
 
 var_names <- c()
 for (v in names(spec(whitewine)[["cols"]])) {
-  if(is.null(levels(whitewine[[v]]))){
+  if(!is.factor(whitewine[[v]])){
     var_names <- c(var_names,v)
   }
 }
@@ -133,56 +136,56 @@ ui <- fluidPage(
         value = "explore",
         
         fluidRow(
+          column(width = 6, align = "center",
+            selectInput(
+              inputId = 'selected_var',
+              label = 'Variable:',
+              choices = var_names,
+              width = '50%'
+            ),
+          ),
+          column(width = 6, align = "center",
+                 sliderInput(
+                   inputId = "quality_minmax",
+                   label = "Quality:",
+                   value = c(as.integer(quality_levels[1]),as.integer(quality_levels[length(quality_levels)])),
+                   min = as.integer(quality_levels[1]),
+                   max = as.integer(quality_levels[length(quality_levels)]),
+                   step = 1,
+                 )
+          ),
+        ),
+
+        fluidRow(
+          column(width = 6, align = "center",
+            tableOutput('summary_table'),                     
+          ),
+          column(width = 6, align = "center",
+            tableOutput('quality_count_table'),                     
+          ),
+          
+        ),
+        
+        fluidRow(
           column(width = 6,
-            fluidRow(
-              column(width = 6,
-                selectInput(
-                  inputId = 'selected_var',
-                  label = 'Variable:',
-                  choices = var_names,
-                  width = '100%',
-                ),
-              ),
-            ),
-            )
+            plotOutput("frequency_plot"),                 
           ),
-        
-          fluidRow(
-            column(width = 6, align = "center",
-                   tableOutput('summarytable'),                     
-            ),
-            column(width = 6, align = "center",
-                   sliderInput(
-                     inputId = "quality_minmax",
-                     label = "Quality:",
-                     value = c(quality_levels[1],quality_levels[length(quality_levels)]),
-                     min = quality_levels[1],
-                     max = quality_levels[length(quality_levels)],
-                     step = 1,
-                   ),
+          column(width = 6, align = "center",
+            plotOutput("point_plot"),
+            selectInput(
+              inputId = 'selected_var_pointplot',
+              label = NULL,
+              choices = var_names,
+              selected = var_names[length(var_names)],
+              width = '50%',
             ),
           ),
-        
-          fluidRow(
-            column(width = 6,
-                   plotOutput("frequency_plot"),                 
-            ),
-            column(width = 6, align = "center",
-                   plotOutput("point_plot"),
-                   selectInput(
-                     inputId = 'selected_var_pointplot',
-                     label = NULL,
-                     choices = var_names,
-                     selected = var_names[length(var_names)],
-                     width = '50%',
-                   ),
-            ),
+        ),
+        fluidRow(
+          column(width = 6,
+            plotOutput("box_plot"),						  
           ),
-          fluidRow(
-            column(width = 6,
-                   plotOutput("box_plot"),						  
-            ),
-          ),
+        ),
       ),   
 
       # Statistical Models ----
@@ -225,7 +228,8 @@ server <- function(input, output, session) {
     
     
     output$point_plot <- renderPlot({
-      data <- filter(whitewine,between(quality,input$quality_minmax[1],input$quality_minmax[2]))
+      #data <- filter(whitewine,between(quality,input$quality_minmax[1],input$quality_minmax[2]))
+      data <- filter(whitewine,quality %in% c(input$quality_minmax[1]:input$quality_minmax[2]))
       x <- data[[input$selected_var_pointplot]]
       y <- data[[input$selected_var]]
       c <- data[["quality"]]
@@ -238,7 +242,7 @@ server <- function(input, output, session) {
         base_theme()
     })
     
-    output$summarytable <- renderTable(
+    output$summary_table <- renderTable(
       align = 'c',
       whitewine %>%
       summarise("Mean" = mean(whitewine[[input$selected_var]]), 
@@ -246,7 +250,17 @@ server <- function(input, output, session) {
                 "STDEV" = sd(whitewine[[input$selected_var]]), 
                 "Min" = min(whitewine[[input$selected_var]]),
                 "Max" = max(whitewine[[input$selected_var]]))
-      )
+    )
+
+    output$quality_count_table <- renderTable(
+      align = 'c',
+      whitewine %>%
+        group_by(quality) %>%
+          count(name = "total_count") %>%
+            #filter(between(quality,input$quality_minmax[1],input$quality_minmax[2])) %>%
+            filter(quality %in% c(input$quality_minmax[1]:input$quality_minmax[2])) %>%
+              pivot_wider(names_from = quality, values_from = total_count)
+    )
     
     observeEvent(input$switch_home,    {updateTabsetPanel(session, "nav_panel", "home")})
     observeEvent(input$switch_predict, {updateTabsetPanel(session, "nav_panel", "predict")})
