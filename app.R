@@ -24,6 +24,8 @@ whitewine <- read_delim('./data/winequality-white.csv',delim=';', col_names = TR
 #whitewine <- rename_with(whitewine, replace_space)
 whitewine$quality = as.factor(whitewine$quality)
 
+quality_levels <- as.integer(levels(whitewine[["quality"]]))
+
 var_names <- c()
 for (v in names(spec(whitewine)[["cols"]])) {
   if(is.null(levels(whitewine[[v]]))){
@@ -55,12 +57,14 @@ ui <- fluidPage(
     ),
 
     navlistPanel(
+      id = "nav_panel",
       widths = c(2, 10),
       well = FALSE,
 
       # Home ----
       tabPanel(
-        "Home", 
+        title="Home", 
+        value="home",
         tags$p(
           class = "color1",
           style="width:100%; text-align:center; font-size:36px; font-weight: bold;",
@@ -78,21 +82,20 @@ ui <- fluidPage(
           "We offer you a tool to evaluate wine quality based on physicochemical tests results for the following 11 factors:"
           
         ),
-        tags$br(),
-        tags$p(
+        tags$ul(
           class = "hometext",
-          "- Fixed acidity",  tags$br(),
-          "- Volatile acidity", tags$br(),
-          "- Citric acid", tags$br(),
-          "- Residual sugar", tags$br(),
-          "- Chlorides", tags$br(),
-          "- Free sulfur dioxide", tags$br(),
-          "- Total sulfur dioxide", tags$br(),
-          "- Density", tags$br(),
-          "- pH", tags$br(),
-          "- Sulphates", tags$br(),
-          "- Alcohol", tags$br(),
-        ), 
+          tags$li("Fixed acidity"),
+          tags$li("Volatile acidity"),
+          tags$li("Citric acid"),
+          tags$li("Residual sugar"),
+          tags$li("Chlorides"),
+          tags$li("Free sulfur dioxide"),
+          tags$li("Total sulfur dioxide"),
+          tags$li("Density"),
+          tags$li("pH"),
+          tags$li("Sulphates"),
+          tags$li("Alcohol"),
+        ),
         tags$br(),
         tags$p(
           class = "hometext",
@@ -102,85 +105,97 @@ ui <- fluidPage(
         tags$br(),
         tags$p(
           class = "hometext",
-          "Enter your result in our ", tags$b("ANALYZER")," to see how your wine will score.", tags$br(),
-          "If you want to get an overview on the data, in ",tags$b("DATA INSIGHTS")," your will find more details.", tags$br(),
-          "For further information on the applied ",tags$b("MODELS")," feel free to have a look at them as well."
+          "Enter your result in our ", tags$b(actionLink(inputId = 'switch_predict', label = "ANALYZER")), " to see how your wine will score.", 
+        ),
+        tags$br(),
+        tags$p(
+          class = "hometext",
+          "If you want to get an overview on the data, in ",tags$b(actionLink(inputId = 'switch_explore', label = "DATA INSIGHTS"))," your will find more details.", tags$br(),
+        ),
+        tags$br(),
+        tags$p(
+          class = "hometext",
+          "For further information on the applied ",tags$b(actionLink(inputId = 'switch_model', label = "MODELS"))," feel free to have a look at them as well."
         ),
         
       ),
       
       # Statistical Models ----
       tabPanel(
-        "Analyzer", 
+        title="Analyzer", 
+        value="predict",
         ""
       ),
       
       # Data Insights ----
       tabPanel(
-        "Data Insights", 
+        title = "Data Insights", 
+        value = "explore",
+        
         fluidRow(
-          # Box Plot
-          column(width = 6,
-                 fluidRow(
-                   column(width = 12,
-                          selectInput(
-                            inputId = 'selected_var',
-                            label = 'Variable:',
-                            choices = var_names,
-                            width = '100%',
-                          )
-                   )),
-                 fluidRow(
-                   column(width = 12,
-                          align = 'center',
-                          tableOutput('summarytable'),               
-                   )),
-                 fluidRow(
-                   column(width = 12,
-                          plotOutput("frequency_plot"),
-                   )),
-                 fluidRow(
-                   column(width = 12,
-                          plotOutput("box_plot"),
-                   )),                 
-          ),
-          
-          # Point Plot
           column(width = 6,
             fluidRow(
-              column(width = 12,
-                  
-              ),
-            ),
-            fluidRow(
-              column(width = 12, align = 'center',     
-                plotOutput("point_plot"),
+              column(width = 6,
                 selectInput(
-                  inputId = 'selected_var_pointplot',
-                  label = NULL,
+                  inputId = 'selected_var',
+                  label = 'Variable:',
                   choices = var_names,
-                  selected = var_names[length(var_names)],
-                  width = '50%',
-                )
-                
+                  width = '100%',
+                ),
               ),
             ),
+            )
           ),
-        ),
+        
+          fluidRow(
+            column(width = 6, align = "center",
+                   tableOutput('summarytable'),                     
+            ),
+            column(width = 6, align = "center",
+                   sliderInput(
+                     inputId = "quality_minmax",
+                     label = "Quality:",
+                     value = c(quality_levels[1],quality_levels[length(quality_levels)]),
+                     min = quality_levels[1],
+                     max = quality_levels[length(quality_levels)],
+                     step = 1,
+                   ),
+            ),
+          ),
+        
+          fluidRow(
+            column(width = 6,
+                   plotOutput("frequency_plot"),                 
+            ),
+            column(width = 6, align = "center",
+                   plotOutput("point_plot"),
+                   selectInput(
+                     inputId = 'selected_var_pointplot',
+                     label = NULL,
+                     choices = var_names,
+                     selected = var_names[length(var_names)],
+                     width = '50%',
+                   ),
+            ),
+          ),
+          fluidRow(
+            column(width = 6,
+                   plotOutput("box_plot"),						  
+            ),
+          ),
       ),   
-    
+
       # Statistical Models ----
       tabPanel(
-        "Statistical Models", 
+        title = "Statistical Models", 
+        value = "model",
         ""
       ),
-),
+  ),
 )
 
-
-
 # Define server ----
-server <- function(input, output) {
+server <- function(input, output, session) {
 
     output$box_plot <- renderPlot({
         ggplot(whitewine,aes(quality, whitewine[[input$selected_var]])) + 
@@ -210,14 +225,17 @@ server <- function(input, output) {
     
     
     output$point_plot <- renderPlot({
-      x <- whitewine[[input$selected_var_pointplot]]
-      y <- whitewine[[input$selected_var]]
-      c <- whitewine[["quality"]]
+      data <- filter(whitewine,between(quality,input$quality_minmax[1],input$quality_minmax[2]))
+      x <- data[[input$selected_var_pointplot]]
+      y <- data[[input$selected_var]]
+      c <- data[["quality"]]
+      q <- c("4" = "red", "5" = "blue", "6" = "darkgreen")
       
-      ggplot(whitewine,aes(x,y)) + 
+      ggplot(data,aes(x,y)) + 
         geom_point(color = c) +
-        labs(x = input$selected_var_pointplot, y = input$selected_var) +
-        base_theme() 
+        #scale_color_manual(values = q) +
+        labs(title = "Point Plot", x = input$selected_var_pointplot, y = input$selected_var,) +
+        base_theme()
     })
     
     output$summarytable <- renderTable(
@@ -230,7 +248,10 @@ server <- function(input, output) {
                 "Max" = max(whitewine[[input$selected_var]]))
       )
     
-    
+    observeEvent(input$switch_home,    {updateTabsetPanel(session, "nav_panel", "home")})
+    observeEvent(input$switch_predict, {updateTabsetPanel(session, "nav_panel", "predict")})
+    observeEvent(input$switch_explore, {updateTabsetPanel(session, "nav_panel", "explore")})
+    observeEvent(input$switch_model,   {updateTabsetPanel(session, "nav_panel", "model")})
     
 }
 

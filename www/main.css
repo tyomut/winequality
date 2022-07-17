@@ -27,3 +27,19 @@
   text-align:justify; 
   font-size:18px;
 }
+
+a,
+a:hover,
+a:focus{
+  color: #00664d ;
+  outline: none;
+}
+
+.nav-pills > li.active > a,
+.nav-pills > li.active > a:focus,
+.nav-pills > li.active > a:focus-visible,
+.nav-pills > li.active > a:hover{
+  background-color:#92d050 ;
+  outline: none;
+}
+
