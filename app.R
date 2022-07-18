@@ -185,6 +185,10 @@ ui <- fluidPage(
           column(width = 6,
             plotOutput("box_plot"),						  
           ),
+          column(width = 6,
+             plotOutput("quality_density_plot"),						  
+          ),
+          
         ),
       ),   
 
@@ -200,6 +204,7 @@ ui <- fluidPage(
 # Define server ----
 server <- function(input, output, session) {
 
+    #box_plot
     output$box_plot <- renderPlot({
         ggplot(whitewine,aes(quality, whitewine[[input$selected_var]])) + 
         geom_boxplot() + 
@@ -211,11 +216,12 @@ server <- function(input, output, session) {
         base_theme()
       })
 
+    #frequency_plot
     output$frequency_plot <- renderPlot({
       q <- quantile(whitewine[[input$selected_var]], probs = c(0.25,0.50,0.75))
 
       ggplot(whitewine,aes(whitewine[[input$selected_var]])) + 
-        geom_freqpoly() +  
+        geom_density(kernel="gaussian") +  
         geom_vline(xintercept = q[1], color = 'blue',linetype = 3,) +
         geom_vline(xintercept = q[2], color = 'red', linetype = 2,) +
         geom_vline(xintercept = q[3], color = 'blue',linetype = 3,) +
@@ -223,25 +229,34 @@ server <- function(input, output, session) {
         annotate(geom = "text", x = q[2], y = 0, label = "50%") +
         annotate(geom = "text", x = q[3], y = 0, label = "75%") +
         base_theme() +
-        labs(title = "Frequency Plot",  x = input$selected_var, y="count" )
+        labs(title = "Density Plot (Gaussian)",  x = input$selected_var, y="Density" )
     })
     
-    
+    #point_plot
     output$point_plot <- renderPlot({
-      #data <- filter(whitewine,between(quality,input$quality_minmax[1],input$quality_minmax[2]))
-      data <- filter(whitewine,quality %in% c(input$quality_minmax[1]:input$quality_minmax[2]))
-      x <- data[[input$selected_var_pointplot]]
-      y <- data[[input$selected_var]]
-      c <- data[["quality"]]
+      d <- filter(whitewine,quality %in% c(input$quality_minmax[1]:input$quality_minmax[2]))
+      x <- d[[input$selected_var_pointplot]]
+      y <- d[[input$selected_var]]
+      c <- d[["quality"]]
       q <- c("4" = "red", "5" = "blue", "6" = "darkgreen")
       
-      ggplot(data,aes(x,y)) + 
-        geom_point(color = c) +
-        #scale_color_manual(values = q) +
-        labs(title = "Point Plot", x = input$selected_var_pointplot, y = input$selected_var,) +
+      ggplot(d,aes(x,y)) + 
+        geom_point(color = c,) +
+        labs(title = "Point Plot", x = input$selected_var_pointplot, y = input$selected_var) +
         base_theme()
     })
     
+    #quality_density_plot
+    output$quality_density_plot <- renderPlot({
+      d <- filter(whitewine,quality %in% c(input$quality_minmax[1]:input$quality_minmax[2]))
+      
+      ggplot(d) + 
+      geom_density(aes(x = d[[input$selected_var]], group = d[["quality"]], fill = d[["quality"]],),alpha = 0.3) +
+      labs(title = "Quality Density Plot", x = input$selected_var_pointplot, y = "Density",) +
+      base_theme()
+    })
+    
+    #summary_table
     output$summary_table <- renderTable(
       align = 'c',
       whitewine %>%
@@ -252,6 +267,7 @@ server <- function(input, output, session) {
                 "Max" = max(whitewine[[input$selected_var]]))
     )
 
+    #quality_count_table
     output$quality_count_table <- renderTable(
       align = 'c',
       whitewine %>%
