@@ -251,7 +251,7 @@ server <- function(input, output, session) {
       d <- filter(whitewine,quality %in% c(input$quality_minmax[1]:input$quality_minmax[2]))
       
       ggplot(d) + 
-      geom_density(aes(x = d[[input$selected_var]], group = d[["quality"]], fill = d[["quality"]],),alpha = 0.3) +
+      geom_density(aes(x = d[[input$selected_var_pointplot]], group = d[["quality"]], fill = d[["quality"]],),alpha = 0.3) +
       labs(title = "Quality Density Plot", x = input$selected_var_pointplot, y = "Density",) +
       base_theme()
     })
