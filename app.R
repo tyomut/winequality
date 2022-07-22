@@ -55,6 +55,34 @@ data_predict <- predict(model_svm,data_test)
 
 conf_matrix <- confusionMatrix(data = data_predict, reference = data_test$quality)
 
+predict_svm <- function(fixed_acidity,
+                        volatile_acidity,
+                        citric_acid,
+                        residual_sugar,
+                        chlorides,
+                        free_sulfur_dioxide,
+                        total_sulfur_dioxide,
+                        density,
+                        pH,
+                        sulphates,
+                        alcohol){
+  
+  data_analyze <- tibble("fixed acidity" = fixed_acidity, 
+                         "volatile acidity" = volatile_acidity,
+                         "citric acid" = citric_acid,
+                         "residual sugar" = residual_sugar,
+                         "chlorides" = chlorides,
+                         "free sulfur dioxide" = free_sulfur_dioxide,
+                         "total sulfur dioxide" = total_sulfur_dioxide,
+                         "density" = density,
+                         "pH" = pH,
+                         "sulphates" = sulphates,
+                         "alcohol" = alcohol)  
+  
+  quality <- as.numeric(redict(model_svm,data_analyze))
+  
+  return(quality)
+}
 
 # Define UI ----
 ui <- fluidPage(
@@ -165,7 +193,7 @@ ui <- fluidPage(
                    value = 0.36,
                  ),
                  textInput(
-                   inputId = "input_residual suga",
+                   inputId = "input_residual_sugar",
                    label = "Residual Sugar",
                    value = 20.70,
                  ),
@@ -223,12 +251,16 @@ ui <- fluidPage(
           column(width = 4,  align = "center",
             tags$div(
               class = "modeldetails",
-              style = "margin-top: 30px",
+              style = "margin-top: 30px,",
               tags$p(
                 class = "modelsubheader color1",
                 "The predicted quality score:",
               ),
-              
+              textInput(
+                inputId = "predicted_quality",
+                label = NULL,
+                value = NULL,
+              ),
             ),
           ),
         ),
@@ -453,6 +485,10 @@ server <- function(input, output, session) {
       conf_matrix[["table"]],
     )    
     
+    observeEvent(input$action_predict_quality, updateTextInput(session = session, 
+                                                         inputId = "predicted_quality",
+                                                         value = 9999
+                                                         ))
 }
 
 # Run the application ----
