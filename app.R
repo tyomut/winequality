@@ -2,6 +2,8 @@
 library(shiny)
 library(tidyverse)
 library(ggplot2)
+library(e1071)
+library(caret)
 
 # Helper functions ----
 replace_space <- function(txt){
@@ -35,6 +37,21 @@ for (v in names(spec(whitewine)[["cols"]])) {
     var_names <- c(var_names,v)
   }
 }
+
+# Build Model ----
+
+partion <- createDataPartition(y = whitewine$quality, p= 0.8, list = FALSE)
+
+data_train <- whitewine[partion,,drop=TRUE]
+data_test <- whitewine[-partion,,drop=TRUE]
+
+model_svm <- svm(data_train$quality ~ ., data = data_train, kernel = "radial", cost = 10, scale = TRUE)
+
+data_predict <- predict(model_svm,data_test)
+
+conf_matrix <- confusionMatrix(data = data_predict, reference = data_test$quality)
+#conf_matrix$overall["Accuracy"]
+#conf_matrix$table
 
 # Define UI ----
 ui <- fluidPage(
@@ -251,7 +268,7 @@ server <- function(input, output, session) {
       d <- filter(whitewine,quality %in% c(input$quality_minmax[1]:input$quality_minmax[2]))
       
       ggplot(d) + 
-      geom_density(aes(x = d[[input$selected_var_pointplot]], group = d[["quality"]], fill = d[["quality"]],),alpha = 0.3) +
+      geom_density(aes(x = d[[input$selected_var_pointplotinst]], group = d[["quality"]], fill = d[["quality"]],),alpha = 0.3) +
       labs(title = "Quality Density Plot", x = input$selected_var_pointplot, y = "Density",) +
       base_theme()
     })
