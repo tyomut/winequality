@@ -31,7 +31,7 @@ whitewine[["quality"]] <- ordered(as.factor(whitewine[["quality"]]))
 
 quality_levels <- levels(whitewine[["quality"]])
 
-col_name <- spec(whitewine)[["cols"]]
+col_names <- spec(whitewine)[["cols"]]
 
 var_names <- c()
 for (v in names(col_names)) {
@@ -251,7 +251,7 @@ ui <- fluidPage(
           column(width = 4,  align = "center",
             tags$div(
               class = "modeldetails",
-              style = "margin-top: 30px,",
+              style = "margin-top: 30px",
               tags$p(
                 class = "modelsubheader color1",
                 "The predicted quality score:",
