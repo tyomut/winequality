@@ -31,8 +31,10 @@ whitewine[["quality"]] <- ordered(as.factor(whitewine[["quality"]]))
 
 quality_levels <- levels(whitewine[["quality"]])
 
+col_name <- spec(whitewine)[["cols"]]
+
 var_names <- c()
-for (v in names(spec(whitewine)[["cols"]])) {
+for (v in names(col_names)) {
   if(!is.factor(whitewine[[v]])){
     var_names <- c(var_names,v)
   }
@@ -45,13 +47,14 @@ partion <- createDataPartition(y = whitewine$quality, p= 0.8, list = FALSE)
 data_train <- whitewine[partion,,drop=TRUE]
 data_test <- whitewine[-partion,,drop=TRUE]
 
-model_svm <- svm(data_train$quality ~ ., data = data_train, kernel = "radial", cost = 10, scale = TRUE)
+svm_kernel = "radial"
+
+model_svm <- svm(data_train$quality ~ ., data = data_train, kernel = svm_kernel, cost = 10, scale = TRUE)
 
 data_predict <- predict(model_svm,data_test)
 
 conf_matrix <- confusionMatrix(data = data_predict, reference = data_test$quality)
-#conf_matrix$overall["Accuracy"]
-#conf_matrix$table
+
 
 # Define UI ----
 ui <- fluidPage(
@@ -64,15 +67,15 @@ ui <- fluidPage(
     fluidRow(
       column(width = 12,
           img(src="logo.png", height = '100px', style = "float:left;"),
-          tags$div(tags$span('Wine'),class="color1 logotext line1"),
-          tags$div(tags$span('Quality'),class="color2 logotext line2"),
-          tags$div(tags$span('Analyzer'),class="color3 logotext line3"),
+          tags$div(tags$span("Wine"),class="color1 logotext line1"),
+          tags$div(tags$span("Quality"),class="color2 logotext line2"),
+          tags$div(tags$span("Analyzer"),class="color3 logotext line3"),
       ),
     ),
     fluidRow(
       column(
         width = 12,
-        img(src="bar.png",width = '100%', height = '2px')
+        img(src="bar.png",width = "100%", height = "2px")
       ),
     ),
 
@@ -125,26 +128,110 @@ ui <- fluidPage(
         tags$br(),
         tags$p(
           class = "hometext",
-          "Enter your result in our ", tags$b(actionLink(inputId = 'switch_predict', label = "ANALYZER")), " to see how your wine will score.", 
+          "Enter your result in our ", tags$b(actionLink(inputId = "switch_predict", label = "ANALYZER")), " to see how your wine will score.", 
         ),
         tags$br(),
         tags$p(
           class = "hometext",
-          "If you want to get an overview on the data, in ",tags$b(actionLink(inputId = 'switch_explore', label = "DATA INSIGHTS"))," your will find more details.", tags$br(),
+          "If you want to get an overview on the data, in ",tags$b(actionLink(inputId = "switch_explore", label = "DATA INSIGHTS"))," your will find more details.", tags$br(),
         ),
         tags$br(),
         tags$p(
           class = "hometext",
-          "For further information on the applied ",tags$b(actionLink(inputId = 'switch_model', label = "MODELS"))," feel free to have a look at them as well."
+          "For further information on the applied ",tags$b(actionLink(inputId = "switch_model", label = "MODELS"))," feel free to have a look at them as well."
         ),
         
       ),
       
-      # Statistical Models ----
+      # Analyzer ----
       tabPanel(
         title="Analyzer", 
         value="predict",
-        ""
+        fluidRow(
+          column(width = 2, 
+                 textInput(
+                   inputId = "input_fixed_acidity",
+                   label = "Fixed Acidity",
+                   value = 7.0,
+                 ),
+                 textInput(
+                   inputId = "input_volatile_acidity",
+                   label = "Volatile Acidity",
+                   value = 0.270,
+                 ),
+                 textInput(
+                   inputId = "input_citric_acid",
+                   label = "Citric Acid",
+                   value = 0.36,
+                 ),
+                 textInput(
+                   inputId = "input_residual suga",
+                   label = "Residual Sugar",
+                   value = 20.70,
+                 ),
+                 textInput(
+                   inputId = "input_chlorides",
+                   label = "Chlorides",
+                   value = 0.045,
+                 ),
+                 textInput(
+                   inputId = "input_free_sulfur_dioxide",
+                   label = "Free Sulfur Dioxide",
+                   value = 45.0,
+                 ),
+          ),
+          column(width = 2,
+                 textInput(
+                   inputId = "input_total_sulfur_dioxide",
+                   label = "Total Sulfur Dioxide",
+                   value = 0,
+                 ),
+                 textInput(
+                   inputId = "input_density",
+                   label = "Density",
+                   value = 1.0010,
+                 ),
+                 textInput(
+                   inputId = "input_pH",
+                   label = "pH",
+                   value = 3.00,
+                 ),
+                 textInput(
+                   inputId = "input_sulphates",
+                   label = "Sulphates",
+                   value = 0.45,
+                 ),
+                 textInput(
+                   inputId = "input_alcohol",
+                   label = "Alcohol",
+                   value = 8.8,
+                 ),          
+          ),
+        ),
+        fluidRow(
+          column(width = 4,  align = "center",
+            actionButton(
+              inputId = "action_predict_quality",
+              label = "Predict Quality",
+              icon = icon (name = "wine-glass"),
+              width = "50%",
+              style = "font-size: 14pt; background-color: #92d050; border-radius: 20px;",
+            ),
+          ),
+        ),
+        fluidRow(
+          column(width = 4,  align = "center",
+            tags$div(
+              class = "modeldetails",
+              style = "margin-top: 30px",
+              tags$p(
+                class = "modelsubheader color1",
+                "The predicted quality score:",
+              ),
+              
+            ),
+          ),
+        ),
       ),
       
       # Data Insights ----
@@ -155,8 +242,8 @@ ui <- fluidPage(
         fluidRow(
           column(width = 6, align = "center",
             selectInput(
-              inputId = 'selected_var',
-              label = 'Variable:',
+              inputId = "selected_var",
+              label = "Variable:",
               choices = var_names,
               width = '50%'
             ),
@@ -175,10 +262,10 @@ ui <- fluidPage(
 
         fluidRow(
           column(width = 6, align = "center",
-            tableOutput('summary_table'),                     
+            tableOutput("summary_table"),                     
           ),
           column(width = 6, align = "center",
-            tableOutput('quality_count_table'),                     
+            tableOutput("quality_count_table"),                     
           ),
           
         ),
@@ -190,7 +277,7 @@ ui <- fluidPage(
           column(width = 6, align = "center",
             plotOutput("point_plot"),
             selectInput(
-              inputId = 'selected_var_pointplot',
+              inputId = "selected_var_pointplot",
               label = NULL,
               choices = var_names,
               selected = var_names[length(var_names)],
@@ -213,9 +300,59 @@ ui <- fluidPage(
       tabPanel(
         title = "Statistical Models", 
         value = "model",
-        ""
+        fluidRow(
+          column(width = 4,
+            fluidRow(
+              column(width = 12,
+                style = "line-height:1",
+                tags$p(
+                  class = "modelheader color1",
+                  "SVM"
+                ),
+              ),
+            ),
+            fluidRow(
+              column(width = 12,
+                tags$div(
+                  class = "modeldetails",
+                  tags$p(
+                    class = "modelsubheader color1",
+                    "Parameters"
+                  ),
+                  tags$div(
+                    class = "modelparams",
+                    tableOutput("svm_params_table"),  
+                  ),
+                ),
+              ),
+            ),
+            fluidRow(
+              column(width = 12,
+                tags$div(
+                  class = "modeldetails",
+                  tags$p(
+                    class = "modelsubheader color1",
+                    "Results"
+                  ),
+                  tags$div(
+                    class = "modelparams",
+                    tableOutput("svm_results_table"),  
+                  ),
+                  tags$div(
+                    class = "modelparams",
+                    tags$b("Confusion Matrix"),
+                  ),
+                  tags$div(
+                    class = "modelparams",
+                    verbatimTextOutput("svm_confusion_table"),  
+                  ),                  
+                ),
+              ),
+            ),
+        ),
       ),
-  ),
+    ),
+  )
 )
 
 # Define server ----
@@ -255,7 +392,6 @@ server <- function(input, output, session) {
       x <- d[[input$selected_var_pointplot]]
       y <- d[[input$selected_var]]
       c <- d[["quality"]]
-      q <- c("4" = "red", "5" = "blue", "6" = "darkgreen")
       
       ggplot(d,aes(x,y)) + 
         geom_point(color = c,) +
@@ -268,7 +404,7 @@ server <- function(input, output, session) {
       d <- filter(whitewine,quality %in% c(input$quality_minmax[1]:input$quality_minmax[2]))
       
       ggplot(d) + 
-      geom_density(aes(x = d[[input$selected_var_pointplotinst]], group = d[["quality"]], fill = d[["quality"]],),alpha = 0.3) +
+      geom_density(aes(x = d[[input$selected_var_pointplot]], group = d[["quality"]], fill = d[["quality"]],),alpha = 0.3) +
       labs(title = "Quality Density Plot", x = input$selected_var_pointplot, y = "Density",) +
       base_theme()
     })
@@ -279,7 +415,7 @@ server <- function(input, output, session) {
       whitewine %>%
       summarise("Mean" = mean(whitewine[[input$selected_var]]), 
                 "Median" = median(whitewine[[input$selected_var]]),
-                "STDEV" = sd(whitewine[[input$selected_var]]), 
+                "Std.Dev." = sd(whitewine[[input$selected_var]]), 
                 "Min" = min(whitewine[[input$selected_var]]),
                 "Max" = max(whitewine[[input$selected_var]]))
     )
@@ -299,6 +435,23 @@ server <- function(input, output, session) {
     observeEvent(input$switch_predict, {updateTabsetPanel(session, "nav_panel", "predict")})
     observeEvent(input$switch_explore, {updateTabsetPanel(session, "nav_panel", "explore")})
     observeEvent(input$switch_model,   {updateTabsetPanel(session, "nav_panel", "model")})
+    
+    #svm_params_table
+    output$svm_params_table <- renderTable(
+      align = 'c',
+      tibble(kernel = svm_kernel, cost = model_svm$cost, gamma = model_svm$gamma, "Number of classes" = model_svm$nclasses),
+    )
+    
+    #svm_results_table
+    output$svm_results_table <- renderTable(
+      align = 'c',
+      tibble("Overall Accuracy"=conf_matrix$overall[1], "Number of Sup.Vec." = model_svm$tot.nSV),
+    )    
+
+    #svm_confusion_table
+    output$svm_confusion_table <- renderPrint(
+      conf_matrix[["table"]],
+    )    
     
 }
 

@@ -47,3 +47,35 @@ a:focus{
   font-size: 14pt;
   
 }
+
+.modelheader {
+  width:100%; 
+  text-align:center; 
+  font-size:24px; 
+  font-weight: bold; 
+  background-color: #e2f3cf; 
+  border-radius: 10px;
+}
+
+.modeldetails {
+  width:100%; 
+  border: 1px #92d050 solid;
+  border-radius: 10px;  
+  margin-top: 10px;
+}
+
+.modelsubheader{
+  text-align:center; 
+  font-size:16px; 
+  font-weight: bold;
+}
+
+.modelparams {
+    text-align: center;
+}
+
+.modelparams table{
+  margin-left:auto;
+  margin-right: auto;
+  text-align: center;
+}
