@@ -130,7 +130,7 @@ ui <- fluidPage(
         tags$br(),
         tags$p(
           class = "hometext",
-          "We offer you a tool to evaluate wine quality based on physicochemical tests results for the following 11 factors:"
+          "We offer you a tool to evaluate the quality of white wine based on physicochemical tests results for the following 11 factors:"
           
         ),
         tags$ul(
@@ -166,7 +166,7 @@ ui <- fluidPage(
         tags$br(),
         tags$p(
           class = "hometext",
-          "For further information on the applied ",tags$b(actionLink(inputId = "switch_model", label = "MODELS"))," feel free to have a look at them as well."
+          "For further information on the applied ",tags$b(actionLink(inputId = "switch_model", label = "MODELS,"))," feel free to have a look at them as well."
         ),
         
       ),
