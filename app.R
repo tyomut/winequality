@@ -42,6 +42,7 @@ for (v in names(col_names)) {
 
 # Build Model ----
 
+# SVM ----
 partion <- createDataPartition(y = whitewine$quality, p= 0.8, list = FALSE)
 
 data_train <- whitewine[partion,,drop=TRUE]
@@ -51,9 +52,9 @@ svm_kernel = "radial"
 
 model_svm <- svm(data_train$quality ~ ., data = data_train, kernel = svm_kernel, cost = 10, scale = TRUE)
 
-data_predict <- predict(model_svm,data_test)
+data_predict_svm <- predict(model_svm,data_test)
 
-conf_matrix <- confusionMatrix(data = data_predict, reference = data_test$quality)
+conf_matrix_svm <- confusionMatrix(data = data_predict_svm, reference = data_test$quality)
 
 predict_svm <- function(fixed_acidity,
                         volatile_acidity,
@@ -79,7 +80,7 @@ predict_svm <- function(fixed_acidity,
                          "sulphates" = sulphates,
                          "alcohol" = alcohol)  
   
-  quality <- as.numeric(redict(model_svm,data_analyze))
+  quality <- as.numeric(predict(model_svm,data_analyze))
   
   return(quality)
 }
@@ -382,6 +383,55 @@ ui <- fluidPage(
               ),
             ),
         ),
+        column(width = 4,
+               fluidRow(
+                 column(width = 12,
+                        style = "line-height:1",
+                        tags$p(
+                          class = "modelheader color1",
+                          "RF"
+                        ),
+                 ),
+               ),
+               fluidRow(
+                 column(width = 12,
+                        tags$div(
+                          class = "modeldetails",
+                          tags$p(
+                            class = "modelsubheader color1",
+                            "Parameters"
+                          ),
+                          tags$div(
+                            class = "modelparams",
+                            tableOutput("svm_params_table"),  
+                          ),
+                        ),
+                 ),
+               ),
+               fluidRow(
+                 column(width = 12,
+                        tags$div(
+                          class = "modeldetails",
+                          tags$p(
+                            class = "modelsubheader color1",
+                            "Results"
+                          ),
+                          tags$div(
+                            class = "modelparams",
+                            tableOutput("svm_results_table"),  
+                          ),
+                          tags$div(
+                            class = "modelparams",
+                            tags$b("Confusion Matrix"),
+                          ),
+                          tags$div(
+                            class = "modelparams",
+                            verbatimTextOutput("svm_confusion_table"),  
+                          ),                  
+                        ),
+                 ),
+               ),
+        ),
       ),
     ),
   )
@@ -477,17 +527,27 @@ server <- function(input, output, session) {
     #svm_results_table
     output$svm_results_table <- renderTable(
       align = 'c',
-      tibble("Overall Accuracy"=conf_matrix$overall[1], "Number of Sup.Vec." = model_svm$tot.nSV),
+      tibble("Overall Accuracy"=conf_matrix_svm$overall[1], "Number of Sup.Vec." = model_svm$tot.nSV),
     )    
 
     #svm_confusion_table
     output$svm_confusion_table <- renderPrint(
-      conf_matrix[["table"]],
+      conf_matrix_svm[["table"]],
     )    
     
     observeEvent(input$action_predict_quality, updateTextInput(session = session, 
                                                          inputId = "predicted_quality",
-                                                         value = 9999
+                                                         value = predict_svm(input$input_fixed_acidity,
+                                                                             input$input_volatile_acidity,
+                                                                             input$input_citric_acid,
+                                                                             input$input_residual_sugar,
+                                                                             input$input_chlorides,
+                                                                             input$input_free_sulfur_dioxide, 
+                                                                             input$input_total_sulfur_dioxide, 
+                                                                             input$input_density, 
+                                                                             input$input_pH, 
+                                                                             input$input_sulphates,
+                                                                             input$input_alcohol)
                                                          ))
 }
 
