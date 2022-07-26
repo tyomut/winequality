@@ -6,10 +6,6 @@ library(e1071)
 library(caret)
 
 # Helper functions ----
-replace_space <- function(txt){
-  str_replace_all(txt,'\\s','_')
-}
-
 base_theme <- function() {
     theme(axis.title.x = element_text(size = 20),
           axis.text.x = element_text(size = 12),
@@ -23,7 +19,7 @@ base_theme <- function() {
 
 # Load Data ----
 whitewine <- read_delim('./data/winequality-white.csv',delim=';', col_names = TRUE)
-#whitewine <- rename_with(whitewine, replace_space)
+whitewine <- rename_with(whitewine, ~ gsub(" ", "_", .x, fixed = TRUE))
 
 mutate(whitewine,quality = as.character(quality))
 
@@ -31,12 +27,10 @@ whitewine[["quality"]] <- ordered(as.factor(whitewine[["quality"]]))
 
 quality_levels <- levels(whitewine[["quality"]])
 
-col_names <- spec(whitewine)[["cols"]]
-
 var_names <- c()
-for (v in names(col_names)) {
+for (v in names(whitewine)) {
   if(!is.factor(whitewine[[v]])){
-    var_names <- c(var_names,v)
+    var_names <- c(var_names,sub(" ", "_", v, fixed = TRUE))
   }
 }
 
@@ -56,34 +50,52 @@ data_predict_svm <- predict(model_svm,data_test)
 
 conf_matrix_svm <- confusionMatrix(data = data_predict_svm, reference = data_test$quality)
 
-predict_svm <- function(fixed_acidity,
-                        volatile_acidity,
-                        citric_acid,
-                        residual_sugar,
-                        chlorides,
-                        free_sulfur_dioxide,
-                        total_sulfur_dioxide,
-                        density,
-                        pH,
-                        sulphates,
-                        alcohol){
-  
-  data_analyze <- tibble("fixed acidity" = fixed_acidity, 
-                         "volatile acidity" = volatile_acidity,
-                         "citric acid" = citric_acid,
-                         "residual sugar" = residual_sugar,
-                         "chlorides" = chlorides,
-                         "free sulfur dioxide" = free_sulfur_dioxide,
-                         "total sulfur dioxide" = total_sulfur_dioxide,
-                         "density" = density,
-                         "pH" = pH,
-                         "sulphates" = sulphates,
-                         "alcohol" = alcohol)  
-  
-  quality <- as.numeric(predict(model_svm,data_analyze))
+predict_svm <- function(data_analyze){
+
+  quality <- as.numeric(predict(model_svm, data_analyze))
   
   return(quality)
 }
+
+predict_rf <- function(data_analyze){
+  quality <- "-- Not implemented --"
+  
+  return(quality)
+}
+
+predict_quality <- function(selected_model,
+                            fixed_acidity,
+                            volatile_acidity,
+                            citric_acid,
+                            residual_sugar,
+                            chlorides,
+                            free_sulfur_dioxide,
+                            total_sulfur_dioxide,
+                            density,
+                            pH,
+                            sulphates,
+                            alcohol){
+
+  data_analyze <- tibble("fixed_acidity" = as.double(fixed_acidity), 
+                         "volatile_acidity" = as.double(volatile_acidity),
+                         "citric_acid" = as.double(citric_acid),
+                         "residual_sugar" = as.double(residual_sugar),
+                         "chlorides" = as.double(chlorides),
+                         "free_sulfur_dioxide" = as.double(free_sulfur_dioxide),
+                         "total_sulfur_dioxide" = as.double(total_sulfur_dioxide),
+                         "density" = as.double(density),
+                         "pH" = as.double(pH),
+                         "sulphates" = as.double(sulphates),
+                         "alcohol" = as.double(alcohol))
+  
+  if(selected_model == "SVM") 
+    return(predict_svm(data_analyze))
+
+  if(selected_model == "RF") 
+    return(predict_rf(data_analyze))
+  
+}
+
 
 # Define UI ----
 ui <- fluidPage(
@@ -235,6 +247,16 @@ ui <- fluidPage(
                    label = "Alcohol",
                    value = 8.8,
                  ),          
+          ),
+        ),
+        fluidRow(
+          column(width = 4,  align = "center",
+            selectInput(inputId = "selected_model",
+                        label = "Statistical Model",
+                        choices = c("SVM","RF"),
+                        width = '50%'
+                       ),
+                 
           ),
         ),
         fluidRow(
@@ -552,20 +574,33 @@ server <- function(input, output, session) {
       conf_matrix_svm[["table"]],
     )    
     
-    observeEvent(input$action_predict_quality, updateTextInput(session = session, 
-                                                         inputId = "predicted_quality",
-                                                         value = predict_svm(input$input_fixed_acidity,
-                                                                             input$input_volatile_acidity,
-                                                                             input$input_citric_acid,
-                                                                             input$input_residual_sugar,
-                                                                             input$input_chlorides,
-                                                                             input$input_free_sulfur_dioxide, 
-                                                                             input$input_total_sulfur_dioxide, 
-                                                                             input$input_density, 
-                                                                             input$input_pH, 
-                                                                             input$input_sulphates,
-                                                                             input$input_alcohol)
-                                                         ))
+    observeEvent(input$action_predict_quality,
+                 {
+                   predicted_quality <- predict_quality(input$selected_model,
+                                                        input$input_fixed_acidity,
+                                                        input$input_volatile_acidity,
+                                                        input$input_citric_acid,
+                                                        input$input_residual_sugar,
+                                                        input$input_chlorides,
+                                                        input$input_free_sulfur_dioxide, 
+                                                        input$input_total_sulfur_dioxide, 
+                                                        input$input_density, 
+                                                        input$input_pH, 
+                                                        input$input_sulphates,
+                                                        input$input_alcohol)
+                    updateTextInput(session = session, 
+                                    inputId = "predicted_quality",
+                                    value = predicted_quality)
+                 }
+                )
+    
+    observeEvent(input$selected_model,
+                 {
+                   updateTextInput(session = session, 
+                                   inputId = "predicted_quality",
+                                   value = "")
+                 }
+                )
 }
 
 # Run the application ----
