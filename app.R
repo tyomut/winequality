@@ -403,7 +403,7 @@ ui <- fluidPage(
                           ),
                           tags$div(
                             class = "modelparams",
-                            tableOutput("svm_params_table"),  
+                            tableOutput("rf_params_table"),  
                           ),
                         ),
                  ),
@@ -418,7 +418,7 @@ ui <- fluidPage(
                           ),
                           tags$div(
                             class = "modelparams",
-                            tableOutput("svm_results_table"),  
+                            tableOutput("rf_results_table"),  
                           ),
                           tags$div(
                             class = "modelparams",
@@ -426,12 +426,12 @@ ui <- fluidPage(
                           ),
                           tags$div(
                             class = "modelparams",
-                            verbatimTextOutput("svm_confusion_table"),  
+                            verbatimTextOutput("rf_confusion_table"),  
                           ),                  
                         ),
                  ),
                ),
-        ),
+        ),        
       ),
     ),
   )
@@ -532,6 +532,23 @@ server <- function(input, output, session) {
 
     #svm_confusion_table
     output$svm_confusion_table <- renderPrint(
+      conf_matrix_svm[["table"]],
+    )    
+
+    #rf_params_table
+    output$rf_params_table <- renderTable(
+      align = 'c',
+      tibble(kernel = svm_kernel, cost = model_svm$cost, gamma = model_svm$gamma, "Number of classes" = model_svm$nclasses),
+    )
+    
+    #rf_results_table
+    output$rf_results_table <- renderTable(
+      align = 'c',
+      tibble("Overall Accuracy"=conf_matrix_svm$overall[1], "Number of Sup.Vec." = model_svm$tot.nSV),
+    )    
+    
+    #rf_confusion_table
+    output$rf_confusion_table <- renderPrint(
       conf_matrix_svm[["table"]],
     )    
     
