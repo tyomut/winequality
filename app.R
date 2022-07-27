@@ -4,6 +4,7 @@ library(tidyverse)
 library(ggplot2)
 library(e1071)
 library(caret)
+library(randomForest)
 
 # Helper functions ----
 base_theme <- function() {
@@ -36,11 +37,14 @@ for (v in names(whitewine)) {
 
 # Build Model ----
 
-# SVM ----
+# Train/ Test split
+
 partion <- createDataPartition(y = whitewine$quality, p= 0.8, list = FALSE)
 
 data_train <- whitewine[partion,,drop=TRUE]
 data_test <- whitewine[-partion,,drop=TRUE]
+
+# SVM ----
 
 svm_kernel = "radial"
 
@@ -57,8 +61,16 @@ predict_svm <- function(data_analyze){
   return(quality)
 }
 
+# RF ----
+
+model_rf <- randomForest(data_train$quality ~ ., data = data_train, ntree= 500)
+
+data_predict_rf <- predict(model_rf,data_test, type="class")
+
+conf_matrix_rf <- confusionMatrix(data = data_predict_rf, reference = data_test$quality)
+
 predict_rf <- function(data_analyze){
-  quality <- "-- Not implemented --"
+  quality <- as.numeric(predict(model_rf,data_test, type="class"))
   
   return(quality)
 }
