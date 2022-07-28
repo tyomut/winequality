@@ -572,18 +572,18 @@ server <- function(input, output, session) {
     #rf_params_table
     output$rf_params_table <- renderTable(
       align = 'c',
-      tibble(kernel = svm_kernel, cost = model_svm$cost, gamma = model_svm$gamma, "Number of classes" = model_svm$nclasses),
+      tibble("Number of Trees" = "500"),
     )
     
     #rf_results_table
     output$rf_results_table <- renderTable(
       align = 'c',
-      tibble("Overall Accuracy"=conf_matrix_svm$overall[1], "Number of Sup.Vec." = model_svm$tot.nSV),
+      tibble("Overall Accuracy"=conf_matrix_rf$overall[1], "Number of Sup.Vec." = model_rf$tot.nSV),
     )    
     
     #rf_confusion_table
     output$rf_confusion_table <- renderPrint(
-      conf_matrix_svm[["table"]],
+      conf_matrix_rf[["table"]],
     )    
     
     observeEvent(input$action_predict_quality,
