@@ -52,6 +52,7 @@ model_svm <- svm(data_train$quality ~ ., data = data_train, kernel = svm_kernel,
 
 data_predict_svm <- predict(model_svm,data_test)
 
+
 conf_matrix_svm <- confusionMatrix(data = data_predict_svm, reference = data_test$quality)
 
 predict_svm <- function(data_analyze){
@@ -70,7 +71,7 @@ data_predict_rf <- predict(model_rf,data_test, type="class")
 conf_matrix_rf <- confusionMatrix(data = data_predict_rf, reference = data_test$quality)
 
 predict_rf <- function(data_analyze){
-  quality <- as.numeric(predict(model_rf,data_test, type="class"))
+  quality <- as.numeric(predict(model_rf,data_analyze, type="class"))
   
   return(quality)
 }
