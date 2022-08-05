@@ -481,18 +481,31 @@ ui <- fluidPage(
       ),
       tags$p(
         class = "hometext",
-        "Project details"
+        "This project was developed as part of the course", tags$b("Big data: Anwendungsentwicklung"), "in the master program 'Data Science and Business Analytics' at", tags$b("Aalen University.")
+        
+      ),   
+        tags$br(),
+        tags$p(
+          class = "hometext",
+          "The objective was the creation of a", tags$b("Shiny"), "application for a data science use case with", tags$b("advanced statistical models."), tags$br(), 
+          "The focus was set on a correct application of the", tags$b("statistical models"), "as well as on the", tags$b("user experience"),  "of the application."
+      ),   
+      tags$br(),
+      tags$p(
+        class = "hometext",
+        "The project was developed as a joint effort by the student team Tunc Yomut and Gabriel Grosskopf."
+     
       ),
       tags$br(),
       tags$p(
         class = "",
         style="width:100%; text-align:justify; font-size:24px; font-weight: bold;",
-        "Details of dataset"
+        "Dataset details"
       ),
       tags$br(),      
       tags$span(
         class = "hometext",
-        "Datasource"
+        "Datasource:"
       ),
       tags$a(
         href = "https://archive.ics.uci.edu/ml/datasets/wine+quality",
@@ -512,7 +525,7 @@ ui <- fluidPage(
         tags$li("Statistical object: Wine"),
         tags$li("Location: Portugal (sample survey)"),
         tags$li("Time period: 2009"),
-        tags$li("Sample size: 4898"),
+        tags$li("Sample size: 4.898"),
       ),
       tags$br(),
       tags$table(id= "variable_details_table", width = "20%", border = "1",
