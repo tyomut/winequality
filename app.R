@@ -1,10 +1,6 @@
 # Define libraries ----
-library(shiny)
-library(tidyverse)
-library(ggplot2)
-library(e1071)
-library(caret)
-library(randomForest)
+require("install.load")
+install_load(c("shiny","tidyverse","ggplot2","e1071","caret","randomForest"))
 
 # Helper functions ----
 base_theme <- function() {
@@ -511,9 +507,11 @@ server <- function(input, output, session) {
       c <- d[["quality"]]
       
       ggplot(d,aes(x,y)) + 
-        geom_point(color = c,) +
-        labs(title = "Point Plot", x = input$selected_var_pointplot, y = input$selected_var) +
-        base_theme()
+      geom_point(aes(color = factor(quality)),) +
+      scale_colour_brewer(palette = "Set1") + 
+      guides(color=guide_legend(title="Quality")) + 
+      labs(title = "Point Plot", x = input$selected_var_pointplot, y = input$selected_var) +
+      base_theme()
     })
     
     #quality_density_plot
@@ -521,7 +519,9 @@ server <- function(input, output, session) {
       d <- filter(whitewine,quality %in% c(input$quality_minmax[1]:input$quality_minmax[2]))
       
       ggplot(d) + 
-      geom_density(aes(x = d[[input$selected_var_pointplot]], group = d[["quality"]], fill = d[["quality"]],),alpha = 0.3) +
+      geom_density(aes(x = d[[input$selected_var_pointplot]], fill = d[["quality"]]), alpha = 0.3) +
+      guides(fill=guide_legend(title="Quality")) + 
+      scale_fill_brewer(palette = "Set1") + 
       labs(title = "Quality Density Plot", x = input$selected_var_pointplot, y = "Density",) +
       base_theme()
     })
@@ -536,16 +536,15 @@ server <- function(input, output, session) {
                 "Min" = min(whitewine[[input$selected_var]]),
                 "Max" = max(whitewine[[input$selected_var]]))
     )
-
+    
     #quality_count_table
     output$quality_count_table <- renderTable(
       align = 'c',
       whitewine %>%
-        group_by(quality) %>%
-          count(name = "total_count") %>%
-            #filter(between(quality,input$quality_minmax[1],input$quality_minmax[2])) %>%
-            filter(quality %in% c(input$quality_minmax[1]:input$quality_minmax[2])) %>%
-              pivot_wider(names_from = quality, values_from = total_count)
+      group_by(quality) %>%
+      count(name = "total_count") %>%
+      filter(quality %in% c(input$quality_minmax[1]:input$quality_minmax[2])) %>%
+      pivot_wider(names_from = quality, values_from = total_count)
     )
     
     observeEvent(input$switch_home,    {updateTabsetPanel(session, "nav_panel", "home")})
