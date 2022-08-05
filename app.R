@@ -465,6 +465,129 @@ ui <- fluidPage(
         ),        
       ),
     ),
+    # About ----
+    tabPanel(
+      title = "About", 
+      value = "about",
+      tags$p(
+        class = "color1",
+        style="width:100%; text-align:left; font-size:36px; font-weight: bold;",
+        "About"
+      ),
+      tags$p(
+        class = "",
+        style="width:100%; text-align:justify; font-size:24px; font-weight: bold;",
+        "Project Details"
+      ),
+      tags$p(
+        class = "hometext",
+        "Project details"
+      ),
+      tags$br(),
+      tags$p(
+        class = "",
+        style="width:100%; text-align:justify; font-size:24px; font-weight: bold;",
+        "Details of dataset"
+      ),
+      tags$br(),      
+      tags$span(
+        class = "hometext",
+        "Datasource"
+      ),
+      tags$a(
+        href = "https://archive.ics.uci.edu/ml/datasets/wine+quality",
+        target = "blank_",
+        "UCI Machine Learning Repository - Wine Quality Data Set"
+      ),
+      tags$br(),
+      tags$br(),      
+      tags$p(
+        class = "hometext",
+        "The dataset is on white variants of the Portuguese 'Vinho Verde' wine.",tags$br(), 
+        "The dataset contains information on the physicochemical and sensory 4.898 instances for 11 input features and 1 output feature."
+      ),
+      tags$br(),
+      tags$ul(
+        class = "hometext",
+        tags$li("Statistical object: Wine"),
+        tags$li("Location: Portugal (sample survey)"),
+        tags$li("Time period: 2009"),
+        tags$li("Sample size: 4898"),
+      ),
+      tags$br(),
+      tags$table(id= "variable_details_table", width = "20%", border = "1",
+        tags$thead(style = "font-weight:bold; font-size:12pt",
+          tags$td("Variable"),
+          tags$td("Type of scale"),
+        ),
+        tags$tbody(
+          tags$tr(
+            tags$td("fixed acidity"),
+            tags$td("metric"),
+          ),
+          tags$tr(
+            tags$td("volatile acidity"),
+            tags$td("metric"),
+          ),
+          tags$tr(
+            tags$td("citric acid"),
+            tags$td("metric"),
+          ),
+          tags$tr(
+            tags$td("residual sugar"),
+            tags$td("metric"),
+          ),          
+          tags$tr(
+            tags$td("chlorides"),
+            tags$td("metric"),
+          ),          
+          tags$tr(
+            tags$td("free sulfur dioxide"),
+            tags$td("metric"),
+          ),          
+          tags$tr(
+            tags$td("total sulfur dioxide"),
+            tags$td("metric"),
+          ),          
+          tags$tr(
+            tags$td("density"),
+            tags$td("metric"),
+          ),          
+          tags$tr(
+            tags$td("pH"),
+            tags$td("metric"),
+          ),          
+          tags$tr(
+            tags$td("sulphates"),
+            tags$td("metric"),
+          ),          
+          tags$tr(
+            tags$td("alcohol"),
+            tags$td("metric"),
+          ),          
+          tags$tr(
+            tags$td("quality"),
+            tags$td("ordinal "),
+          ),          
+        ),
+      ),
+      
+      
+      tags$p(
+        class = "hometext",
+        ""
+      ),
+      tags$br(),
+      tags$p(
+        class = "hometext",
+        ""
+      ),
+      tags$br(),
+      tags$p(
+        class = "hometext",
+        ""
+      ),            
+    )
   )
 )
 
