@@ -1,10 +1,6 @@
 # Define libraries ----
-library(shiny)
-library(tidyverse)
-library(ggplot2)
-library(e1071)
-library(caret)
-library(randomForest)
+require("install.load")
+install_load(c("shiny","tidyverse","ggplot2","e1071","caret","randomForest"))
 
 # Helper functions ----
 base_theme <- function() {
