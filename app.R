@@ -97,10 +97,10 @@ predict_quality <- function(selected_model,
                          "sulphates" = as.double(sulphates),
                          "alcohol" = as.double(alcohol))
   
-  if(selected_model == "SVM") 
+  if(selected_model == "Support Vector Machine") 
     return(predict_svm(data_analyze))
 
-  if(selected_model == "RF") 
+  if(selected_model == "Random Forest") 
     return(predict_rf(data_analyze))
   
 }
@@ -152,29 +152,15 @@ ui <- fluidPage(
         tags$br(),
         tags$p(
           class = "hometext",
-          "We offer you a tool to evaluate the quality of white wine based on physicochemical tests results for the following 11 factors:"
+          "We offer you a tool to evaluate the",tags$b("quality of white wine"), "based on physicochemical tests results for",tags$b("11 factors"), "(e.g. Alcohol, Fixed acidity, Residual sugar, etc.)"
           
-        ),
-        tags$ul(
-          class = "hometext",
-          tags$li("Fixed acidity"),
-          tags$li("Volatile acidity"),
-          tags$li("Citric acid"),
-          tags$li("Residual sugar"),
-          tags$li("Chlorides"),
-          tags$li("Free sulfur dioxide"),
-          tags$li("Total sulfur dioxide"),
-          tags$li("Density"),
-          tags$li("pH"),
-          tags$li("Sulphates"),
-          tags$li("Alcohol"),
+  
         ),
         tags$br(),
         tags$p(
           class = "hometext",
-          "In order to provide you a reliable prediction we have built a comprehensive machine learning model that we trained with ",tags$b("over 3,000")," observations and tested extensively.", tags$br(), 
-          "We followed the standard framework for data mining (CRISP-DM) in the development of this application."
-        ),
+          "In order to provide you a", tags$b("reliable prediction"), "we have built a comprehensive", tags$b("machine learning model"), "that we trained with ",tags$b("over 3,000 observations"),"  and tested extensively."
+         ),
         tags$br(),
         tags$p(
           class = "hometext",
@@ -262,8 +248,8 @@ ui <- fluidPage(
           column(width = 4,  align = "center",
             selectInput(inputId = "selected_model",
                         label = "Statistical Model",
-                        choices = c("SVM","RF"),
-                        width = '50%'
+                        choices = c("Support Vector Machine","Random Forest"),
+                        width = '60%'
                        ),
                  
           ),
@@ -360,19 +346,33 @@ ui <- fluidPage(
         ),
       ),   
 
-      # Statistical Models ----
+      #  Models ----
       tabPanel(
-        title = "Statistical Models", 
+        title = "Models", 
         value = "model",
         fluidRow(
           column(width = 4,
             fluidRow(
               column(width = 12,
-                style = "line-height:1",
+                style = "line-height:2",
                 tags$p(
                   class = "modelheader color1",
-                  "SVM"
+                  "Support Vector Machine (SVM)"
                 ),
+              ),
+            ),
+            fluidRow(
+              column(width = 12,
+                     style = "line-height:2",
+                     tags$p(
+                       
+                       "For more details on the Support Vector Machine model please click", tags$a(
+                         href = "https://en.wikipedia.org/wiki/Support-vector_machine",
+                         style="font-weight: bold",
+                         target = "blank_",
+                         "here."
+                       ),
+                     ),
               ),
             ),
             fluidRow(
@@ -417,10 +417,24 @@ ui <- fluidPage(
         column(width = 4,
                fluidRow(
                  column(width = 12,
-                        style = "line-height:1",
+                        style = "line-height:2",
                         tags$p(
                           class = "modelheader color1",
-                          "RF"
+                          "Random Forest (RF)"
+                        ),
+                 ),
+               ),
+               fluidRow(
+                 column(width = 12,
+                        style = "line-height:2",
+                        tags$p(
+
+                          "For more details on the Random Forest model please click", tags$a(
+                            href = "https://en.wikipedia.org/wiki/Random_forest",
+                            style="font-weight: bold",
+                            target = "blank_",
+                            "here."
+                          ),
                         ),
                  ),
                ),
@@ -477,11 +491,11 @@ ui <- fluidPage(
       tags$p(
         class = "",
         style="width:100%; text-align:justify; font-size:24px; font-weight: bold;",
-        "Project Details"
+        "Details & Contact"
       ),
       tags$p(
         class = "hometext",
-        "This project was developed as part of the course", tags$b("Big data: Anwendungsentwicklung"), "in the master program 'Data Science and Business Analytics' at", tags$b("Aalen University.")
+        "This application was developed as part of the course", tags$b("Business Analytics: Application Development"), "in the master program 'Data Science and Business Analytics' at", tags$b("Aalen University.")
         
       ),   
         tags$br(),
@@ -493,9 +507,24 @@ ui <- fluidPage(
       tags$br(),
       tags$p(
         class = "hometext",
-        "The project was developed as a joint effort by the student team Tunc Yomut and Gabriel Grosskopf."
-     
+        "The project was a joint effort by the student team below, feel free to contact them: "
+        
       ),
+      tags$a(
+        href = "mailto:tunc.yomut@studmail.htw-aalen.de",
+        target = "blank_",
+        style="margin-right: 20px; font-size: 20px;font-weight: bold;",
+        "Tunc Yomut"
+
+      ),
+      tags$a(
+        href = "mailto:gabriel.grosskopf@studmail.htw-aalen.de",
+        target = "blank_",
+        style="font-size: 20px; font-weight: bold;",
+        "Gabriel Großkopf"
+
+      ),
+      tags$br(),
       tags$br(),
       tags$p(
         class = "",
@@ -511,6 +540,7 @@ ui <- fluidPage(
         href = "https://archive.ics.uci.edu/ml/datasets/wine+quality",
         target = "blank_",
         "UCI Machine Learning Repository - Wine Quality Data Set"
+
       ),
       tags$br(),
       tags$br(),      
