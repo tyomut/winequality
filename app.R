@@ -162,21 +162,41 @@ ui <- fluidPage(
           "In order to provide you a", tags$b("reliable prediction"), "we have built a comprehensive", tags$b("machine learning model"), "that we trained with ",tags$b("over 3,000 observations"),"  and tested extensively."
          ),
         tags$br(),
-        tags$p(
-          class = "hometext",
-          "Enter your result in our ", tags$b(actionLink(inputId = "switch_predict", label = "ANALYZER")), " to see how your wine will score.", 
+        fluidRow(
+          column(width = 4, 
+            tags$div(
+              class = "homesubsection",
+              actionLink(inputId = "switch_predict", img(src="analyzer.png", height="150px")),
+              tags$p(
+                class = "hometext",
+                style="text-align: center;",
+                "Enter your result in our ", tags$br(), tags$b(actionLink(inputId = "switch_predict", label = "ANALYZER")), tags$br(), " to see how your wine will score.", 
+              ),
+            ),
+          ),
+          column(width = 4,
+            tags$div(
+              class = "homesubsection",
+              actionLink(inputId = "switch_explore", img(src="explore.png", height="150px")),
+              tags$p(
+                class = "hometext",
+                style="text-align: center;",
+                "If you want to get an overview on the data, in ", tags$br(), tags$b(actionLink(inputId = "switch_explore", label = "DATA INSIGHTS")), tags$br(), " your will find more details.", tags$br(),
+              ),
+            ),
+          ),
+          column(width = 4,
+            tags$div(
+              class = "homesubsection",
+              actionLink(inputId = "switch_model", img(src="model.png", height="150px")),
+              tags$p(
+                class = "hometext",
+                style="text-align: center;",
+                "For further information on the applied ", tags$br(), tags$b(actionLink(inputId = "switch_model", label = "MODELS,")), tags$br(), " feel free to have a look at them as well."
+              ),
+            ),
+          ),
         ),
-        tags$br(),
-        tags$p(
-          class = "hometext",
-          "If you want to get an overview on the data, in ",tags$b(actionLink(inputId = "switch_explore", label = "DATA INSIGHTS"))," your will find more details.", tags$br(),
-        ),
-        tags$br(),
-        tags$p(
-          class = "hometext",
-          "For further information on the applied ",tags$b(actionLink(inputId = "switch_model", label = "MODELS,"))," feel free to have a look at them as well."
-        ),
-        
       ),
       
       # Analyzer ----

@@ -28,6 +28,14 @@
   font-size:18px;
 }
 
+.homesubsection {
+  width:100%; 
+  border: 1px #92d050 solid;
+  border-radius: 10px;  
+  padding: 10px;
+  text-align: center;
+}
+
 a,
 a:hover,
 a:focus{
