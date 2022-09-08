@@ -515,7 +515,8 @@ ui <- fluidPage(
       ),
       tags$p(
         class = "hometext",
-        "This application was developed as part of the course", tags$b("Business Analytics: Application Development"), "in the master program 'Data Science and Business Analytics' at", tags$b("Aalen University.")
+        "This application was developed as part of the course", tags$b("Business Analytics: Application Development"), tags$br(),
+        "in the master program 'Data Science and Business Analytics' at", tags$b("Aalen University"), " in SoSe 2022 under the supervision of ", tags$b("Dipl.-Phys. Ralf Hurst.")
         
       ),   
         tags$br(),
